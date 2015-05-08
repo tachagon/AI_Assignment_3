@@ -37,20 +37,22 @@ public class GraphPanel extends JPanel implements ActionListener {
     double Ymax = 1.2, Ymin = 0;
     final Color[] color = {
         new Color(47, 79, 79),      // DarkSlateGray
+        new Color(255, 193, 193),   // RosyBrown1
+        
         new Color(121, 205, 205),   // DarkSlateGray3
+        new Color(238, 201, 0),     // Gold2
+        new Color(50, 205, 50),     // Lime
         new Color(82, 139, 139),    // DarkSlateGray4
         new Color(238, 232, 170),   // PaleGoldenrod
+        new Color(139, 58, 58),     // IndianRed4
         new Color(160, 82, 45),     // Sienna
         new Color(244, 164, 96),    // SandyBrown
         new Color(124, 252, 0),     // LawnGreen
-        new Color(50, 205, 50),     // Lime
         new Color(34, 139, 34),     // ForestGreen
         new Color(255, 255, 0),     // Yellow1
-        new Color(238, 201, 0),     // Gold2
-        new Color(255, 193, 193),   // RosyBrown1
+        
         new Color(205, 155, 155),   // RosyBrown3
         new Color(255, 106, 106),   // IndianRed1
-        new Color(139, 58, 58),     // IndianRed4
         new Color(205, 104, 57),    // Sienna3
         new Color(255, 20, 147),    // DeepPink1
         new Color(205, 16, 118)     // DeepPink3
@@ -205,18 +207,22 @@ public class GraphPanel extends JPanel implements ActionListener {
 //    ****************************** Main !!! **********************************
 //    ##########################################################################
     public static void main(String args[]) {
-        Triangle test = new Triangle("small", 50, 90, 100);
-        test.membershipGrade(0, 100, 0.1);
+        Triangle small = new Triangle("small", -10, -7, -4);
+        small.membershipGrade(-10, 10, 0.1);
 
-        Triangle tri2 = new Triangle("medium", 20, 40, 60);
-        tri2.membershipGrade(0, 100, 0.1);
+        Triangle medium = new Triangle("medium", -6, 0, 6);
+        medium.membershipGrade(-10, 10, 0.1);
+        
+        Triangle large = new Triangle("large", 4, 7, 10);
+        large.membershipGrade(-10, 10, 0.1);
 
         GraphPanel panel1 = new GraphPanel(800, 600);
         panel1.setSize(600, 600);
         panel1.setOpaque(false);
         panel1.setVisible(true);
-        panel1.setData(test.name, test.member);
-        panel1.setData(tri2.name, tri2.member);
+        panel1.setData(small.name, small.member);
+        panel1.setData(medium.name, medium.member);
+        panel1.setData(large.name, large.member);
 
         JFrame f = new JFrame();
         f.setSize(870, 620);

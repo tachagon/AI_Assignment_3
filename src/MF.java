@@ -17,18 +17,18 @@ public class MF {
     public List member;
     
     public static void main(String args[]){
-        Triangle test = new Triangle("small", 10, 20, 30);
-        test.membershipGrade(0, 100, 1);
+        Sigmoidal test = new Sigmoidal("small", 1, -5);
+        test.membershipGrade(-10, 10, 1);
 
-        Bell tri2 = new Bell("medium", 20, 4, 50);
-        tri2.membershipGrade(0, 100, 0.1);
+//        Bell tri2 = new Bell("medium", 20, 4, 50);
+//        tri2.membershipGrade(0, 100, 0.1);
 
         GraphPanel panel1 = new GraphPanel(800, 600);
         panel1.setSize(600, 600);
         panel1.setOpaque(false);
         panel1.setVisible(true);
         panel1.setData(test.name, test.member);
-        panel1.setData(tri2.name, tri2.member);
+//        panel1.setData(tri2.name, tri2.member);
 
         JFrame f = new JFrame();
         f.setSize(870, 620);
@@ -233,6 +233,47 @@ class Bell extends MF{
     }
 }
     
-
+//##############################################################################
+//********************************* Sigmoidal !!! ******************************
+//##############################################################################
+class Sigmoidal extends MF{
+//    Parameter for Trapezoid
+    String name;
+    double a; // Slope of Function
+    double c; // x when y = 0.5
+    
+//    ==========================================================================
+//    Contructor method for create Trapezoid Object
+//    ==========================================================================
+    public Sigmoidal(String name , double a, double c){
+//        set initial value for each variable
+        this.name = name;
+        this.a = a; 
+        this.c = c; 
+        member = new ArrayList();
+    }
+    
+//    ==========================================================================
+//    calculate and keep membership grade for each member
+//    ==========================================================================
+    public void membershipGrade(double start, double end, double step){
+//        Iteration for calculate membership grade of all member
+        for(double x = start; x <= end; x += step){
+//            temp List for keep member and membership grade of member
+//            format: [member(x), membership grade(u(x))]
+            List temp = new ArrayList();
+            temp.add(x);
+//            find membership grade follow formular No. 7-21 in page No. 80
+            temp.add(1/(1+Math.exp(-a*(x-c))));
+            member.add(temp);   // add all into member list
+        }
+    }
+    
+    public void copy(Sigmoidal source){
+        this.a = source.a;
+        this.c = source.c;
+        this.name = source.name;
+    }
+}
 
 //****************************** End of file ***********************************

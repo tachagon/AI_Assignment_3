@@ -43,6 +43,10 @@ public class FuzzySet {
         this.step   = step;
     }
     
+    public void addMF(Object obj){
+        MFList.add(obj);
+    }
+    
 //    ==========================================================================
 //    This function use for copy from Source Object to Destination Object
 //    ==========================================================================
@@ -60,7 +64,8 @@ public class FuzzySet {
     public static void main(String args[]){
         Triangle test = new Triangle("small", 20, 60, 80);
         test.membershipGrade(0, 100, 1);
-        println(test.member);
+        
+        println(test.getClass().getName());
         
         List x = new ArrayList();
         x.add(1);

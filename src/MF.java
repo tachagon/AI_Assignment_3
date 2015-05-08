@@ -87,6 +87,16 @@ class Triangle extends MF{
         }
     }
     
+//    ==========================================================================
+//    calculate membership grade for x
+//    ==========================================================================
+    public double calMG(double x){
+        return Double.max(Double.min((x-a)/(b-a), (c-x)/(c-b)), 0);
+    }
+    
+//    ==========================================================================
+//    Copy Object for use in other function
+//    ==========================================================================
     public void copy(Triangle source){
         this.a = source.a;
         this.b = source.b;
@@ -135,6 +145,16 @@ class Trapezoid extends MF{
         }
     }
     
+//    ==========================================================================
+//    calculate membership grade for x
+//    ==========================================================================
+    public double calMG(double x){
+        return (Double.max(Double.min(Double.min((x-a)/(b-a), 1), (d-x)/(d-c)), 0));
+    }
+    
+//    ==========================================================================
+//    Copy Object for use in other function
+//    ==========================================================================
     public void copy(Trapezoid source){
         this.a = source.a;
         this.b = source.b;
@@ -180,6 +200,16 @@ class Gaussian extends MF{
         }
     }
     
+//    ==========================================================================
+//    calculate membership grade for x
+//    ==========================================================================
+    public double calMG(double x){
+        return (Math.exp((-0.5)*Math.pow(((x-c)/sigma), 2)));
+    }
+    
+//    ==========================================================================
+//    Copy Object for use in other function
+//    ==========================================================================
     public void copy(Gaussian source){
         this.c = source.c;
         this.sigma = source.sigma;
@@ -225,6 +255,16 @@ class Bell extends MF{
         }
     }
     
+//    ==========================================================================
+//    calculate membership grade for x
+//    ==========================================================================
+    public double calMG(double x){
+        return (1/(1+Math.pow(Math.abs((x-c)/a), 2*b)));
+    }
+    
+//    ==========================================================================
+//    Copy Object for use in other function
+//    ==========================================================================
     public void copy(Bell source){
         this.a = source.a;
         this.b = source.b;
@@ -269,6 +309,16 @@ class Sigmoidal extends MF{
         }
     }
     
+//    ==========================================================================
+//    calculate membership grade for x
+//    ==========================================================================
+    public double calMG(double x){
+        return (1/(1+Math.exp(-a*(x-c))));
+    }
+    
+//    ==========================================================================
+//    Copy Object for use in other function
+//    ==========================================================================
     public void copy(Sigmoidal source){
         this.a = source.a;
         this.c = source.c;

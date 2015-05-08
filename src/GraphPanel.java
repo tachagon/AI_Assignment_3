@@ -206,10 +206,10 @@ public class GraphPanel extends JPanel implements ActionListener {
 //    ##########################################################################
     public static void main(String args[]) {
         Triangle test = new Triangle("small", 50, 90, 100);
-        test.membershipGrade(0, 100, 1);
+        test.membershipGrade(0, 100, 0.1);
 
         Triangle tri2 = new Triangle("medium", 20, 40, 60);
-        tri2.membershipGrade(0, 100, 1);
+        tri2.membershipGrade(0, 100, 0.1);
 
         GraphPanel panel1 = new GraphPanel(800, 600);
         panel1.setSize(600, 600);

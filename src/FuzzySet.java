@@ -58,10 +58,17 @@ public class FuzzySet {
     public void addMF(Object obj){
         MFList.add(obj);
     }
-    
+  
+//    ==========================================================================
+//    Function for get membership function object from index of MFList
+//    ==========================================================================
     public Object getMF(int index){
         Object obj = this.MFList.get(index);
         String className = this.MFList.get(index).getClass().getName();
+//        Operation of code below
+//        1. check object class
+//        2. create new object and copy all value from obj to new object
+//        3. return new object
         if(className == "Triangle"){
             Triangle tri = new Triangle();
             tri.copy((Triangle) obj);
@@ -99,9 +106,16 @@ public class FuzzySet {
         return this.MFList.size();
     }
     
+//    ==========================================================================
+//    Function for get membership function name from index of MFList
+//    ==========================================================================
     public String getMFName(int index){
         Object obj = this.MFList.get(index);
         String className = this.MFList.get(index).getClass().getName();
+//        Operation of code below
+//        1. check object class
+//        2. create new object and copy all value from obj to new object
+//        3. get membership function name and return it
         if(className == "Triangle"){
             Triangle tri = new Triangle();
             tri.copy((Triangle) obj);
@@ -129,6 +143,47 @@ public class FuzzySet {
         }
         else{
             return "can not find class of Object";
+        }
+    }
+    
+//    ==========================================================================
+//    Function for get membership function grade value from index of MFList
+//    and input x value
+//    ==========================================================================
+    public double getMG(int index, double x){
+        Object obj = this.MFList.get(index);
+        String className = this.MFList.get(index).getClass().getName();
+//        Operation of code below
+//        1. check object class
+//        2. create new object and copy all value from obj to new object
+//        3. calculate membership grade value from input x and return it
+        if(className == "Triangle"){
+            Triangle tri = new Triangle();
+            tri.copy((Triangle) obj);
+            return tri.calMG(x);
+        }
+        else if(className == "Trapezoid"){
+            Trapezoid tra = new Trapezoid();
+            tra.copy((Trapezoid) obj);
+            return tra.calMG(x);
+        }
+        else if(className == "Gaussian"){
+            Gaussian gau = new Gaussian();
+            gau.copy((Gaussian) obj);
+            return gau.calMG(x);
+        }
+        else if(className == "Bell"){
+            Bell bell = new Bell();
+            bell.copy((Bell) obj);
+            return bell.calMG(x);
+        }
+        else if(className == "Sigmoidal"){
+            Sigmoidal sig = new Sigmoidal();
+            sig.copy((Sigmoidal) obj);
+            return sig.calMG(x);
+        }
+        else{
+            return 0.0;
         }
     }
     

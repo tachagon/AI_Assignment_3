@@ -106,7 +106,11 @@ class Triangle extends MF {
 //    calculate membership grade for x
 //    ==========================================================================
     public double calMG(double x) {
-        return Double.max(Double.min((x - a) / (b - a), (c - x) / (c - b)), 0);
+        double result = Double.max(Double.min((x - a) / (b - a), (c - x) / (c - b)), 0);
+//          convert x as double 4 digit after point
+        DecimalFormat df = new DecimalFormat("#.####");
+        result = Double.valueOf(df.format(result));
+        return result;
     }
 
 //    ==========================================================================
@@ -181,7 +185,11 @@ class Trapezoid extends MF {
 //    calculate membership grade for x
 //    ==========================================================================
     public double calMG(double x) {
-        return (Double.max(Double.min(Double.min((x - a) / (b - a), 1), (d - x) / (d - c)), 0));
+        double result = Double.max(Double.min(Double.min((x - a) / (b - a), 1), (d - x) / (d - c)), 0);
+//          convert x as double 4 digit after point
+        DecimalFormat df = new DecimalFormat("#.####");
+        result = Double.valueOf(df.format(result));
+        return (result);
     }
 
 //    ==========================================================================
@@ -252,7 +260,11 @@ class Gaussian extends MF {
 //    calculate membership grade for x
 //    ==========================================================================
     public double calMG(double x) {
-        return (Math.exp((-0.5) * Math.pow(((x - c) / sigma), 2)));
+        double result = Math.exp((-0.5) * Math.pow(((x - c) / sigma), 2));
+//          convert x as double 4 digit after point
+        DecimalFormat df = new DecimalFormat("#.####");
+        result = Double.valueOf(df.format(result));
+        return (result);
     }
 
 //    ==========================================================================
@@ -324,7 +336,11 @@ class Bell extends MF {
 //    calculate membership grade for x
 //    ==========================================================================
     public double calMG(double x) {
-        return (1 / (1 + Math.pow(Math.abs((x - c) / a), 2 * b)));
+        double result = 1 / (1 + Math.pow(Math.abs((x - c) / a), 2 * b));
+//          convert x as double 4 digit after point
+        DecimalFormat df = new DecimalFormat("#.####");
+        result = Double.valueOf(df.format(result));
+        return (result);
     }
 
 //    ==========================================================================
@@ -394,7 +410,11 @@ class Sigmoidal extends MF {
 //    calculate membership grade for x
 //    ==========================================================================
     public double calMG(double x) {
-        return (1 / (1 + Math.exp(-a * (x - c))));
+        double result = 1 / (1 + Math.exp(-a * (x - c)));
+//            convert x as double 4 digit after point
+        DecimalFormat df = new DecimalFormat("#.####");
+        result = Double.valueOf(df.format(result));
+        return (result);
     }
 
 //    ==========================================================================

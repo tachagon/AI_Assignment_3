@@ -1,4 +1,5 @@
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,11 +59,12 @@ public class TakagiSugeno {
 
 //    ==========================================================================
 //    Function for add a rule in ruleList
+//    You should use genRule before and select some rule to input of this function.
 //    ==========================================================================
-    public void addRule(List rule){
+    public void addRule(List rule) {
         this.ruleList.add(rule);
     }
-    
+
 //    ==========================================================================
 //    Function for generate all rule that can be used
 //    ==========================================================================
@@ -137,7 +139,7 @@ public class TakagiSugeno {
                     member.add(temp1);
                     member.add(temp2);
                     str = "";
-                    
+
                     rules.add(member);
                 }
             }
@@ -145,11 +147,68 @@ public class TakagiSugeno {
         return rules;
     }
 
+//    ==========================================================================
+//    Function for calculate Output and keep output value in outputList
+//    Requirement   1. have inputList size greater than 0
+//                  2. have output name
+//                  3. have ruleList size greater than 0
+//    Format of outputList
+//          [
+//              [valueX, valueY, valueZ], [valueX, valueY, valueZ], ...
+//          ]
+//    ==========================================================================
+    public void calOutput() {
+//        if have one fuzzy set input
+        if (this.inputList.size() == 1) {
+            println("calculate output start");
+//            Iteration for access all x in fuzzy set
+            for (double x = this.start; x <= this.end; x += this.step) {
+//              convert x as double 4 digit after point
+                DecimalFormat df = new DecimalFormat("#.####");
+                x = Double.valueOf(df.format(x));
+                
+                double y = 0;       // create y for keep output value
+                double wSum = 0;    // create wSum for keep summation of weight
+//                Iterator for access each rule in ruleList
+                for(int i = 0; i < this.ruleList.size(); i++){
+//                    get a rule from ruleList
+//                    format of rule ["If X is ...", p, q, r, memberList]
+                    List rule = (List) this.ruleList.get(i);
+                    double p = (double) rule.get(1);    // get p value
+                    double r = (double) rule.get(3);    // get r value
+//                    format of member [Fuzzyset, MFindex]
+                    List member = (List) rule.get(4);
+                    FuzzySet fs = (FuzzySet) member.get(0); // get a Fuzzy Set
+                    int MFindex = (int) member.get(1);      // get MFindex
+                    
+                    // calculate weight of current rule
+                    double w = fs.getMG(MFindex, x);
+                    double Ytemp = (p * x) + r;
+                    
+                    wSum += w;  // summation of weight for all rule
+                    y += Ytemp * w; // summary of result of each rule
+                }
+                y = y / wSum;
+                //println("y = " + y);
+                //println("");
+                List temp = new ArrayList();
+                temp.add(x);
+                temp.add(y);
+                temp.add((double)0.0);
+                this.outputList.add(temp);
+            }
+        } 
+//        if have two fuzzy set input
+        else if (this.inputList.size() == 2) {
+
+        }
+    }
+
 //    ##########################################################################
 //    ****************************** Main !!! **********************************
 //    ##########################################################################
     public static void main(String args[]) {
-        TakagiSugeno TS = new TakagiSugeno(-10, 10, 1);
+        TakagiSugeno TS = new TakagiSugeno(-10, 10, 0.1);
         TS.setOutputName("Z");
 
         FuzzySet X = new FuzzySet("X", TS.start, TS.end, TS.step);
@@ -172,12 +231,30 @@ public class TakagiSugeno {
         Y.addMF(large);
 
         TS.addInput(X);
-        TS.addInput(Y);
-        
+        //TS.addInput(Y);
+
         List rules = TS.genRule();
-        for(Object o:rules){
-            //List mem = (List) ((List)o).get(4);
-            //println(mem);
+        
+        List rule1 = (List) rules.get(0);
+        List rule2 = (List) rules.get(1);
+        List rule3 = (List) rules.get(2);
+        
+        rule1.set(1, (double)0.1);
+        rule1.set(3, (double)6.4);
+        
+        rule2.set(1, (double)-0.5);
+        rule2.set(3, (double)4);
+        
+        rule3.set(1, (double)1);
+        rule3.set(3, (double)-2);
+        
+        TS.addRule(rule1);
+        TS.addRule(rule2);
+        TS.addRule(rule3);
+
+        TS.calOutput();
+        
+        for(Object o:TS.outputList){
             println(o);
         }
     }

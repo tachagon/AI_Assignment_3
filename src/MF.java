@@ -75,6 +75,14 @@ class Triangle extends MF {
         member = new ArrayList();
     }
 
+    public Triangle() {
+        this.name = "";
+        this.a = 0;
+        this.b = 0;
+        this.c = 0;
+        member = new ArrayList();
+    }
+
 //    ==========================================================================
 //    calculate and keep membership grade for each member
 //    ==========================================================================
@@ -110,6 +118,10 @@ class Triangle extends MF {
         this.c = source.c;
         this.name = source.name;
     }
+    
+    public String toString(){
+        return this.name;
+    }
 }
 
 //##############################################################################
@@ -134,6 +146,15 @@ class Trapezoid extends MF {
         this.b = b;
         this.c = c;
         this.d = d;
+        member = new ArrayList();
+    }
+
+    public Trapezoid() {
+        this.name = "";
+        this.a = 0;
+        this.b = 0;
+        this.c = 0;
+        this.d = 0;
         member = new ArrayList();
     }
 
@@ -173,6 +194,10 @@ class Trapezoid extends MF {
         this.d = source.d;
         this.name = source.name;
     }
+    
+    public String toString(){
+        return this.name;
+    }
 }
 
 //##############################################################################
@@ -193,6 +218,14 @@ class Gaussian extends MF {
         this.name = name;
         this.c = c;
         this.sigma = sigma;
+        member = new ArrayList();
+    }
+
+    public Gaussian() {
+//        set initial value for each variable
+        this.name = "";
+        this.c = 0;
+        this.sigma = 0;
         member = new ArrayList();
     }
 
@@ -230,6 +263,10 @@ class Gaussian extends MF {
         this.sigma = source.sigma;
         this.name = source.name;
     }
+    
+    public String toString(){
+        return this.name;
+    }
 }
 
 //##############################################################################
@@ -252,6 +289,15 @@ class Bell extends MF {
         this.a = a;
         this.b = b;
         this.c = c;
+        member = new ArrayList();
+    }
+
+    public Bell() {
+//        set initial value for each variable
+        this.name = "";
+        this.a = 0;
+        this.b = 0;
+        this.c = 0;
         member = new ArrayList();
     }
 
@@ -290,6 +336,10 @@ class Bell extends MF {
         this.c = source.c;
         this.name = source.name;
     }
+    
+    public String toString(){
+        return this.name;
+    }
 }
 
 //##############################################################################
@@ -310,6 +360,14 @@ class Sigmoidal extends MF {
         this.name = name;
         this.a = a;
         this.c = c;
+        member = new ArrayList();
+    }
+
+    public Sigmoidal() {
+//        set initial value for each variable
+        this.name = "";
+        this.a = 0;
+        this.c = 0;
         member = new ArrayList();
     }
 
@@ -346,6 +404,10 @@ class Sigmoidal extends MF {
         this.a = source.a;
         this.c = source.c;
         this.name = source.name;
+    }
+    
+    public String toString(){
+        return this.name;
     }
 }
 

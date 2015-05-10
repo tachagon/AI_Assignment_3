@@ -2,7 +2,10 @@
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
 import javax.swing.Timer;
 
 //         __________________    _________    _________
@@ -22,12 +25,19 @@ public class mainFile extends javax.swing.JFrame implements ActionListener {
 //    use timer for run actionPerformed overtime
 //    Usage:    1. use timer.start() for start run actionPerformed function
 //              2. use timer.stop() for stop run actionPerformed function
-    Timer tm = new Timer(0, (ActionListener) this);
 
+    Timer tm = new Timer(0, (ActionListener) this);
+    AddRule addRuleJFrame;
+    
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (jList1.getSelectedValue() != null)this.EditInput.setEnabled(true);
-        else this.EditInput.setEnabled(false);
+        if (jList1.getSelectedValue() != null) {
+            println("selected: " + this.jList1.getSelectedValue());
+            dlm.removeElement(this.jList1.getSelectedValue());
+            this.EditInput.setEnabled(true);
+        } else {
+            this.EditInput.setEnabled(false);
+        }
     }
 
     /**
@@ -105,6 +115,11 @@ public class mainFile extends javax.swing.JFrame implements ActionListener {
         jLabel3.setText("If-Then Rule");
 
         AddRule.setText("Add Rule");
+        AddRule.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddRuleActionPerformed(evt);
+            }
+        });
 
         RunModel.setText("Run Model");
 
@@ -221,6 +236,34 @@ public class mainFile extends javax.swing.JFrame implements ActionListener {
         // TODO add your handling code here:
         
     }//GEN-LAST:event_EditInputActionPerformed
+    List rules = new ArrayList();
+    private void AddRuleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddRuleActionPerformed
+        // TODO add your handling code here:
+        this.addRuleJFrame = new AddRule();
+        this.addRuleJFrame.setVisible(true);
+        //List rules = new ArrayList();
+        List rule = new ArrayList();
+        rule.add("If X is small then z =");
+        rule.add((double)0.0);
+        rule.add((double)0.0);
+        rule.add((double)0.0);
+        List temp1 = new ArrayList();
+        List temp2 = new ArrayList();
+        FuzzySet fs = new FuzzySet("X", -10, 10, 0.1);
+        Triangle tri = new Triangle("small", 0, 5, 10);
+        fs.addMF(tri);
+        temp2.add(fs);
+        temp2.add(0);
+        temp1.add(temp2);
+        rule.add(temp1);
+        
+        rules.add(rule);
+        //rules.add(rule);
+        println("Original: "+rules);
+        
+        this.addRuleJFrame.addRule(rules);
+        this.addRuleJFrame.setRules(rules);
+    }//GEN-LAST:event_AddRuleActionPerformed
 
     /**
      * @param args the command line arguments
@@ -259,13 +302,15 @@ public class mainFile extends javax.swing.JFrame implements ActionListener {
 //    ##########################################################################
 //    Function for easy show something
 //    ##########################################################################
-    private void print(Object o){
+
+    private void print(Object o) {
         System.out.print(o);
     }
-    private void println(Object o){
+
+    private void println(Object o) {
         System.out.println(o);
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AddInput;
     private javax.swing.JButton AddOutput;

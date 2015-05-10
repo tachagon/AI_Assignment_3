@@ -43,19 +43,112 @@ public class FuzzySet {
         this.step   = step;
     }
     
+    public FuzzySet(){
+//        set Initial value for each variable
+        MFList      = new ArrayList();
+        this.name   = "";
+        this.start  = 0;
+        this.end    = 0;
+        this.step   = 0;
+    }
+    
+//    ==========================================================================
+//    Function for add a Membership Function into FuzzySet
+//    ==========================================================================
     public void addMF(Object obj){
         MFList.add(obj);
+    }
+    
+    public Object getMF(int index){
+        Object obj = this.MFList.get(index);
+        String className = this.MFList.get(index).getClass().getName();
+        if(className == "Triangle"){
+            Triangle tri = new Triangle();
+            tri.copy((Triangle) obj);
+            return tri;
+        }
+        else if(className == "Trapezoid"){
+            Trapezoid tra = new Trapezoid();
+            tra.copy((Trapezoid) obj);
+            return tra;
+        }
+        else if(className == "Gaussian"){
+            Gaussian gau = new Gaussian();
+            gau.copy((Gaussian) obj);
+            return gau;
+        }
+        else if(className == "Bell"){
+            Bell bell = new Bell();
+            bell.copy((Bell) obj);
+            return bell;
+        }
+        else if(className == "Sigmoidal"){
+            Sigmoidal sig = new Sigmoidal();
+            sig.copy((Sigmoidal) obj);
+            return sig;
+        }
+        else{
+            return null;
+        }
+    }
+    
+//    ==========================================================================
+//    Function for get number of Membership Function
+//    ==========================================================================
+    public int getMFNum(){
+        return this.MFList.size();
+    }
+    
+    public String getMFName(int index){
+        Object obj = this.MFList.get(index);
+        String className = this.MFList.get(index).getClass().getName();
+        if(className == "Triangle"){
+            Triangle tri = new Triangle();
+            tri.copy((Triangle) obj);
+            return tri.name;
+        }
+        else if(className == "Trapezoid"){
+            Trapezoid tra = new Trapezoid();
+            tra.copy((Trapezoid) obj);
+            return tra.name;
+        }
+        else if(className == "Gaussian"){
+            Gaussian gau = new Gaussian();
+            gau.copy((Gaussian) obj);
+            return gau.name;
+        }
+        else if(className == "Bell"){
+            Bell bell = new Bell();
+            bell.copy((Bell) obj);
+            return bell.name;
+        }
+        else if(className == "Sigmoidal"){
+            Sigmoidal sig = new Sigmoidal();
+            sig.copy((Sigmoidal) obj);
+            return sig.name;
+        }
+        else{
+            return "can not find class of Object";
+        }
     }
     
 //    ==========================================================================
 //    This function use for copy from Source Object to Destination Object
 //    ==========================================================================
-    public void copy(FuzzySet Source){
-        
+    public void copy(FuzzySet source){
+        this.name = source.name;
+        this.start = source.start;
+        this.end = source.end;
+        this.step = source.step;
+        this.MFList = new ArrayList();
+        for(int i=0; i<source.getMFNum(); i++){
+            Object mf = source.getMF(i);
+            this.addMF(mf);
+        }
     }
     
     public String toString(){
-        return "";
+        return this.name;
     }
     
 //    ##########################################################################

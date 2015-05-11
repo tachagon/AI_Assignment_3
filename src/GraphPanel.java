@@ -71,6 +71,7 @@ public class GraphPanel extends JPanel implements ActionListener {
 //    Constructor Method for create a GraphPanel Object
 //    ==========================================================================
     public GraphPanel(int WIDTH, int HEIGHT) {
+        this.setSize(WIDTH, HEIGHT);
         this.WIDTH = WIDTH;
         this.HEIGHT = HEIGHT;
         this.dataList = new ArrayList();
@@ -78,6 +79,17 @@ public class GraphPanel extends JPanel implements ActionListener {
         this.marginRight = 50;
         this.marginBottom = 50;
         this.marginTop = 50;
+        tm.start();
+    }
+    
+//    ==========================================================================
+//    Function for set margin left, margin right, margin top and margin bottom
+//    ==========================================================================
+    public void setMargin(int left, int right, int top, int bottom){
+        this.marginLeft = left;
+        this.marginRight = right;
+        this.marginTop = top;
+        this.marginBottom = bottom;
     }
 
 //    ==========================================================================
@@ -92,7 +104,7 @@ public class GraphPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        this.repaint();
     }
 
     public void setData(String name, List data) {
@@ -352,29 +364,29 @@ public class GraphPanel extends JPanel implements ActionListener {
 //    ##########################################################################
 //    ****************************** Main !!! **********************************
 //    ##########################################################################
-    public static void main(String args[]) {
-        Bell small = new Bell("small", 5, 2.06 , -5);
-        small.membershipGrade(-5, 5, 0.01);
-
-        Bell large = new Bell("large", 5, 2.06, 5);
-        large.membershipGrade(-5, 5, 0.01);
-        
-        GraphPanel panel1 = new GraphPanel(800, 300);
-        panel1.setSize(800, 600);
-        panel1.setOpaque(false);
-        panel1.setVisible(true);
-        panel1.setData(small.name, small.member);
-        panel1.setData(large.name, large.member);
-
-        JFrame f = new JFrame();
-        f.setSize(850, 650);
-        f.add(panel1);
-
-        f.setAutoRequestFocus(true);
-        f.setVisible(true);
-        f.setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-    }
+//    public static void main(String args[]) {
+//        Bell small = new Bell("small", 5, 2.06 , -5);
+//        small.membershipGrade(-5, 5, 0.01);
+//
+//        Bell large = new Bell("large", 5, 2.06, 5);
+//        large.membershipGrade(-5, 5, 0.01);
+//        
+//        GraphPanel panel1 = new GraphPanel(800, 300);
+//        //panel1.setSize(800, 600);
+//        panel1.setOpaque(false);
+//        panel1.setVisible(true);
+//        panel1.setData(small.name, small.member);
+//        panel1.setData(large.name, large.member);
+//
+//        JFrame f = new JFrame();
+//        f.setSize(850, 650);
+//        f.add(panel1);
+//
+//        f.setAutoRequestFocus(true);
+//        f.setVisible(true);
+//        f.setDefaultCloseOperation(EXIT_ON_CLOSE);
+//
+//    }
 
 //    ##########################################################################
 //    Function for easy show something

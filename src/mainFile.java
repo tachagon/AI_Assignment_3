@@ -1,12 +1,17 @@
 
+import org.jzy3d.demos.scatter.ScatterDemo;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
+import org.jzy3d.demos.DemoLauncher;
 
 //         __________________    _________    _________
 //        / _______/ _______ \  / _______ \  / _______/
@@ -27,17 +32,67 @@ public class mainFile extends javax.swing.JFrame implements ActionListener {
 //              2. use timer.stop() for stop run actionPerformed function
 
     Timer tm = new Timer(0, (ActionListener) this);
-    AddRule addRuleJFrame;  // create addRuleJFrame
+    AddRule addRuleJFrame;      // create addRuleJFrame
+    AddInput fs;    // create addInputJFrame
+    DefaultListModel inputItem, outputItem, ruleItem;
+
     TakagiSugeno TS = new TakagiSugeno();
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (jList1.getSelectedValue() != null) {
-            println("selected: " + this.jList1.getSelectedValue());
-            dlm.removeElement(this.jList1.getSelectedValue());
-            this.EditInput.setEnabled(true);
-        } else {
-            this.EditInput.setEnabled(false);
+//        add Fuzzy set input
+        if (this.fs.output != "") {
+            this.TS.addInput(this.fs.fs);
+            println("Success add Fuzzy Set Input");
+            println("Current have input:" + this.TS.inputList.size());
+
+            String temp = this.fs.fs.name + " ( ";
+            for (int i = 0; i < this.fs.fs.MFList.size(); i++) {
+                temp += this.fs.fs.getMFName(i) + " ";
+            }
+            temp += ")";
+            this.inputItem.addElement(temp);
+            this.jList1.setModel(this.inputItem);
+
+            if (this.TS.inputList.size() >= 2) {
+                this.addInput.setEnabled(false);
+            }
+            this.resetInput.setEnabled(true);
+            tm.stop();
+            this.fs = new AddInput();
+        }
+
+//        add Rule
+        if (this.addRuleJFrame.output != "") {
+            this.ruleItem = new DefaultListModel();
+            this.TS.resetRuleList();
+            for (int i = 0; i < this.addRuleJFrame.ruleSelect.size(); i++) {
+                List rule = (List) this.addRuleJFrame.ruleSelect.get(i);
+
+                String str = (String) rule.get(0);
+                double p = (double) rule.get(1);
+                double q = (double) rule.get(2);
+                double r = (double) rule.get(3);
+
+                if (rule.size() == 5) {
+                    FuzzySet temp = (FuzzySet) this.TS.inputList.get(0);
+                    str += " " + p + "*" + temp.name + " + " + r;
+                } else if (rule.size() == 6) {
+                    FuzzySet temp1 = (FuzzySet) this.TS.inputList.get(0);
+                    FuzzySet temp2 = (FuzzySet) this.TS.inputList.get(1);
+                    str += " " + p + "*" + temp1.name + " + " + q + "*" + temp2.name + " + " + r;
+                }
+
+                this.TS.addRule(rule);
+                this.ruleItem.addElement(str);
+                println("You add " + str + " as rule");
+            }
+
+            this.jList3.setModel(ruleItem);
+            this.addRule.setEnabled(false);
+            this.resetRule.setEnabled(true);
+            tm.stop();
+            this.addRuleJFrame = new AddRule();
         }
     }
 
@@ -47,6 +102,15 @@ public class mainFile extends javax.swing.JFrame implements ActionListener {
     public mainFile() {
         initComponents();
         this.getContentPane().setBackground(Color.WHITE);
+        this.init();
+    }
+
+    public void init() {
+        this.addRuleJFrame = new AddRule();
+        this.fs = new AddInput();
+        this.inputItem = new DefaultListModel();
+        this.outputItem = new DefaultListModel();
+        this.ruleItem = new DefaultListModel();
     }
 
     /**
@@ -60,24 +124,27 @@ public class mainFile extends javax.swing.JFrame implements ActionListener {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
-        AddInput = new javax.swing.JButton();
-        EditInput = new javax.swing.JButton();
+        addInput = new javax.swing.JButton();
+        resetInput = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jList2 = new javax.swing.JList();
-        AddOutput = new javax.swing.JButton();
+        addOutput = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jList3 = new javax.swing.JList();
         jLabel3 = new javax.swing.JLabel();
-        AddRule = new javax.swing.JButton();
-        RunModel = new javax.swing.JButton();
+        addRule = new javax.swing.JButton();
+        runModel = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        end = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        start = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        step = new javax.swing.JTextField();
+        resetOutput = new javax.swing.JButton();
+        resetRule = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Takagi-Sugeno Fuzzy Model");
@@ -85,53 +152,108 @@ public class mainFile extends javax.swing.JFrame implements ActionListener {
 
         jScrollPane1.setViewportView(jList1);
 
-        AddInput.setText("Add Input");
-        AddInput.addActionListener(new java.awt.event.ActionListener() {
+        addInput.setText("Add Input");
+        addInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AddInputActionPerformed(evt);
+                addInputActionPerformed(evt);
             }
         });
 
-        EditInput.setText("Edit");
-        EditInput.setEnabled(false);
-        EditInput.addActionListener(new java.awt.event.ActionListener() {
+        resetInput.setText("Reset");
+        resetInput.setEnabled(false);
+        resetInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                EditInputActionPerformed(evt);
+                resetInputActionPerformed(evt);
             }
         });
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        jLabel1.setText("Input");
+        jLabel1.setText("Input (Maximum 2 Input)");
 
         jScrollPane2.setViewportView(jList2);
 
-        AddOutput.setText("Add Output");
+        addOutput.setText("Add Output");
+        addOutput.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addOutputActionPerformed(evt);
+            }
+        });
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        jLabel2.setText("Output");
+        jLabel2.setText("Output (Maximum 1 Output)");
 
         jScrollPane3.setViewportView(jList3);
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel3.setText("If-Then Rule");
 
-        AddRule.setText("Add Rule");
-        AddRule.addActionListener(new java.awt.event.ActionListener() {
+        addRule.setText("Add Rule");
+        addRule.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AddRuleActionPerformed(evt);
+                addRuleActionPerformed(evt);
             }
         });
 
-        RunModel.setText("Run Model");
+        runModel.setText("Run Model");
+        runModel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                runModelActionPerformed(evt);
+            }
+        });
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel4.setText("Range");
 
+        end.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                endKeyReleased(evt);
+            }
+        });
+
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel5.setText("to");
 
+        start.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startActionPerformed(evt);
+            }
+        });
+        start.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                startKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                startKeyReleased(evt);
+            }
+        });
+
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel6.setText("Step");
+
+        step.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                stepKeyReleased(evt);
+            }
+        });
+
+        resetOutput.setText("Reset");
+        resetOutput.setEnabled(false);
+        resetOutput.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetOutputActionPerformed(evt);
+            }
+        });
+
+        resetRule.setText("Reset");
+        resetRule.setEnabled(false);
+        resetRule.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetRuleActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel7.setText("Please fill Range and Step as real number");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -140,131 +262,323 @@ public class mainFile extends javax.swing.JFrame implements ActionListener {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(runModel))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(AddRule)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane3)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(RunModel))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(AddInput)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(EditInput))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel4)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(start, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabel5)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(end, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(47, 47, 47)
+                                    .addComponent(jLabel6)
+                                    .addGap(4, 4, 4))
+                                .addGroup(layout.createSequentialGroup()
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                            .addGap(209, 209, 209)
-                                            .addComponent(jLabel6))
-                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(addInput)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(resetInput))
+                                        .addComponent(jLabel3)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(addRule)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(resetRule)))
+                                    .addGap(93, 93, 93)))
+                            .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel1))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(step, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 23, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                             .addComponent(jLabel2)
-                                            .addComponent(AddOutput)
-                                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(0, 0, Short.MAX_VALUE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addGap(0, 12, Short.MAX_VALUE)
-                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addContainerGap())))
+                                            .addGap(76, 76, 76))
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(addOutput)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(resetOutput)))
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 10, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(start, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(end, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(step, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(AddOutput)
-                    .addComponent(AddInput)
-                    .addComponent(EditInput))
-                .addGap(16, 16, 16)
+                    .addComponent(addInput)
+                    .addComponent(resetInput)
+                    .addComponent(addOutput)
+                    .addComponent(resetOutput))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
-                .addComponent(AddRule)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(addRule)
+                    .addComponent(resetRule))
                 .addGap(11, 11, 11)
-                .addComponent(RunModel)
+                .addComponent(runModel)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    DefaultListModel dlm = new DefaultListModel();
-    int i = 0;
-    private void AddInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddInputActionPerformed
+//    ==========================================================================
+//    Function for event of addInput:JButton
+//    ==========================================================================
+    private void addInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addInputActionPerformed
         // TODO add your handling code here:
-        dlm.addElement("Item:" + i);
-        i++;
-        jList1.setModel(dlm);
-        println("Click Add Input");
-        tm.start();
-    }//GEN-LAST:event_AddInputActionPerformed
+        if (!this.start.getText().isEmpty()
+                && !this.end.getText().isEmpty()
+                && !this.step.getText().isEmpty()) {
+            try {
+//                check start, end and step
+                Double.parseDouble(this.start.getText());
+                Double.parseDouble(this.end.getText());
+                Double.parseDouble(this.step.getText());
 
-    private void EditInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditInputActionPerformed
+                fs = new AddInput();
+                fs.setVisible(true);
+                fs.setUniverse(TS.start, TS.end, TS.step);
+                tm.start();
+            } catch (Exception error) {
+                JOptionPane.showMessageDialog(this, "You fill Range or Step incorrect. You should that is a real number.");
+            }
+        } else {   // you don't fill parameter and you click addInput button
+            JOptionPane.showMessageDialog(this, "You should fill Range and Step that a real number.");
+        }
+
+    }//GEN-LAST:event_addInputActionPerformed
+
+//    ==========================================================================
+//    resetInput: JButton
+//    ==========================================================================
+    private void resetInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetInputActionPerformed
         // TODO add your handling code here:
+        this.TS.resetInputList();
+        this.TS.resetRuleList();
+
+        this.inputItem = new DefaultListModel();
+        this.jList1.setModel(this.inputItem);
+
+        this.ruleItem = new DefaultListModel();
+        this.jList3.setModel(this.ruleItem);
+
+        this.addInput.setEnabled(true);
+        this.resetInput.setEnabled(false);
         
-    }//GEN-LAST:event_EditInputActionPerformed
-    List rules = new ArrayList();
-    private void AddRuleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddRuleActionPerformed
+        this.addRule.setEnabled(true);
+        this.resetRule.setEnabled(false);
+
+        println("You reset input current have input " + this.TS.inputList.size());
+    }//GEN-LAST:event_resetInputActionPerformed
+
+//    ==========================================================================
+//    Function for event of addRule:JButton
+//    ==========================================================================
+    private void addRuleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addRuleActionPerformed
         // TODO add your handling code here:
-        this.addRuleJFrame = new AddRule();
-        this.addRuleJFrame.setVisible(true);
-        //List rules = new ArrayList();
-        List rule = new ArrayList();
-        rule.add("If X is small then z =");
-        rule.add((double)0.0);
-        rule.add((double)0.0);
-        rule.add((double)0.0);
-        List temp1 = new ArrayList();
-        List temp2 = new ArrayList();
-        FuzzySet fs = new FuzzySet("X", -10, 10, 0.1);
-        Triangle tri = new Triangle("small", 0, 5, 10);
-        fs.addMF(tri);
-        temp2.add(fs);
-        temp2.add(0);
-        temp1.add(temp2);
-        rule.add(temp1);
+        if ((TS.inputList.size() > 0) &&
+                (TS.output != null) &&
+                (TS.output != "")) {
+            println("You click Add Rule");
+            println("You have input " + this.TS.inputList.size());
+
+            this.addRuleJFrame = new AddRule();
+            this.addRuleJFrame.setVisible(true);
+
+            List allRule = TS.genRule();
+
+            this.addRuleJFrame.setRules(allRule);
+
+            tm.start();
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "You don't have input or output");
+        }
+    }//GEN-LAST:event_addRuleActionPerformed
+
+    private void startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startActionPerformed
+
+    }//GEN-LAST:event_startActionPerformed
+
+    private void startKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_startKeyPressed
+
+    }//GEN-LAST:event_startKeyPressed
+
+//  ============================================================================  
+//    start JTextFiles----------------------------------------------------------
+//  ============================================================================
+    private void startKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_startKeyReleased
+        // TODO add your handling code here:
+//        check you fill something in start:JTextField
+        if (!this.start.getText().isEmpty()) {
+            String startText = this.start.getText();
+            try {    // try convert text to double
+                double startDouble = Double.parseDouble(startText);
+                TS.setStart(startDouble);
+                println("Set start of range: " + TS.start);
+            } catch (Exception error) {
+
+            }
+        }
+    }//GEN-LAST:event_startKeyReleased
+
+//  ============================================================================  
+//    end JTextFiles----------------------------------------------------------
+//  ============================================================================
+    private void endKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_endKeyReleased
+        // TODO add your handling code here:
+//        check you fill something in end:JTextField
+        if (!this.end.getText().isEmpty()) {
+            String endText = this.end.getText();
+            try {    // try convert text to double
+                double endDouble = Double.parseDouble(endText);
+                TS.setEnd(endDouble);
+                println("Set end of range: " + TS.end);
+            } catch (Exception error) {
+
+            }
+        }
+    }//GEN-LAST:event_endKeyReleased
+
+//  ============================================================================  
+//    step JTextFiles----------------------------------------------------------
+//  ============================================================================
+    private void stepKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_stepKeyReleased
+        // TODO add your handling code here:
+//        check you fill something in step:JTextField
+        if (!this.step.getText().isEmpty()) {
+            String stepText = this.step.getText();
+            try {    // try convert text to double
+                double stepDouble = Double.parseDouble(stepText);
+                TS.setStep(stepDouble);
+                println("Set step of sample space: " + TS.step);
+            } catch (Exception error) {
+
+            }
+        }
+    }//GEN-LAST:event_stepKeyReleased
+
+//    ==========================================================================
+//    addOutput: JButton
+//    ==========================================================================
+    private void addOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addOutputActionPerformed
+        // TODO add your handling code here:
+        String name = JOptionPane.showInputDialog(this, "Plese fill name of output.");
+
+        if ((name != null) && (name != "")) {
+            this.TS.setOutputName(name);
+            println("Yout set output name as " + name);
+
+            this.outputItem.addElement(name);
+            this.jList2.setModel(this.outputItem);
+
+            this.addOutput.setEnabled(false);
+            this.resetOutput.setEnabled(true);
+        } else {
+            println("You click cancle don't set output name.");
+        }
+
+    }//GEN-LAST:event_addOutputActionPerformed
+
+//    ==========================================================================
+//    resetOutput: JButton
+//    ==========================================================================
+    private void resetOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetOutputActionPerformed
+        // TODO add your handling code here:
+        this.TS.setOutputName(null);
+        this.TS.resetRuleList();
+
+        this.outputItem = new DefaultListModel();
+        this.ruleItem = new DefaultListModel();
+
+        this.jList2.setModel(this.outputItem);
+        this.jList3.setModel(this.ruleItem);
+
+        this.addOutput.setEnabled(true);
+        this.resetOutput.setEnabled(false);
         
-        rules.add(rule);
-        //rules.add(rule);
-        println("Original: "+rules);
-        
-        this.addRuleJFrame.addRule(rules);
-        this.addRuleJFrame.setRules(rules);
-    }//GEN-LAST:event_AddRuleActionPerformed
+        this.addRule.setEnabled(true);
+        this.resetRule.setEnabled(false);
+
+        println("You reset output name and reset rule.");
+
+    }//GEN-LAST:event_resetOutputActionPerformed
+
+//    ==========================================================================
+//    resetRule: JButton
+//    ==========================================================================
+    private void resetRuleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetRuleActionPerformed
+        // TODO add your handling code here:
+        this.ruleItem = new DefaultListModel();
+        this.jList3.setModel(ruleItem);
+
+        this.TS.resetRuleList();
+        this.addRule.setEnabled(true);
+        this.resetRule.setEnabled(false);
+
+    }//GEN-LAST:event_resetRuleActionPerformed
+
+//    ==========================================================================
+//    runModel: JButton
+//    ==========================================================================
+    private void runModelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runModelActionPerformed
+        // TODO add your handling code here:
+        if ((TS.inputList.size() > 0)
+                && (TS.output != null)
+                && (TS.output != "")
+                && (TS.ruleList.size() > 0)) {
+            this.TS.resetOutputList();
+            this.TS.calOutput();
+            try {
+                DemoLauncher.openDemo(new ScatterDemo(TS.outputList));
+            } catch (Exception ex) {
+                Logger.getLogger(TakagiSugeno.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "You don't have input or output or rule");
+        }
+    }//GEN-LAST:event_runModelActionPerformed
 
     /**
      * @param args the command line arguments
@@ -313,26 +627,29 @@ public class mainFile extends javax.swing.JFrame implements ActionListener {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton AddInput;
-    private javax.swing.JButton AddOutput;
-    private javax.swing.JButton AddRule;
-    private javax.swing.JButton EditInput;
-    private javax.swing.JButton RunModel;
+    private javax.swing.JButton addInput;
+    private javax.swing.JButton addOutput;
+    private javax.swing.JButton addRule;
+    private javax.swing.JTextField end;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JList jList1;
     private javax.swing.JList jList2;
     private javax.swing.JList jList3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JButton resetInput;
+    private javax.swing.JButton resetOutput;
+    private javax.swing.JButton resetRule;
+    private javax.swing.JButton runModel;
+    private javax.swing.JTextField start;
+    private javax.swing.JTextField step;
     // End of variables declaration//GEN-END:variables
 }
 //****************************** End of file ***********************************

@@ -18,27 +18,27 @@ public class MF {
     // use for keep member of MF format is [member, MemberShip Grade]
     public List member;
 
-    public static void main(String args[]) {
-        Sigmoidal test = new Sigmoidal("small", 1, -5);
-        test.membershipGrade(-10, 10, 1);
-
-//        Bell tri2 = new Bell("medium", 20, 4, 50);
-//        tri2.membershipGrade(0, 100, 0.1);
-        GraphPanel panel1 = new GraphPanel(800, 600);
-        panel1.setSize(600, 600);
-        panel1.setOpaque(false);
-        panel1.setVisible(true);
-        panel1.setData(test.name, test.member);
-//        panel1.setData(tri2.name, tri2.member);
-
-        JFrame f = new JFrame();
-        f.setSize(870, 620);
-        f.add(panel1);
-
-        f.setAutoRequestFocus(true);
-        f.setVisible(true);
-        f.setDefaultCloseOperation(EXIT_ON_CLOSE);
-    }
+//    public static void main(String args[]) {
+//        Sigmoidal test = new Sigmoidal("small", 1, -5);
+//        test.membershipGrade(-10, 10, 1);
+//
+////        Bell tri2 = new Bell("medium", 20, 4, 50);
+////        tri2.membershipGrade(0, 100, 0.1);
+//        GraphPanel panel1 = new GraphPanel(800, 600);
+//        panel1.setSize(600, 600);
+//        panel1.setOpaque(false);
+//        panel1.setVisible(true);
+//        panel1.setData(test.name, test.member);
+////        panel1.setData(tri2.name, tri2.member);
+//
+//        JFrame f = new JFrame();
+//        f.setSize(870, 620);
+//        f.add(panel1);
+//
+//        f.setAutoRequestFocus(true);
+//        f.setVisible(true);
+//        f.setDefaultCloseOperation(EXIT_ON_CLOSE);
+//    }
 //    ##########################################################################
 //    Function for easy show something
 //    ##########################################################################

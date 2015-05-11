@@ -147,6 +147,51 @@ public class FuzzySet {
     }
     
 //    ==========================================================================
+//    Function for get member list from index of MFList
+//    ==========================================================================
+    public List getMFmember(int index){
+        Object obj = this.MFList.get(index);
+        String className = this.MFList.get(index).getClass().getName();
+//        Operation of code below
+//        1. check object class
+//        2. create new object and copy all value from obj to new object
+//        3. get member list and return it
+        if(className == "Triangle"){
+            Triangle tri = new Triangle();
+            tri.copy((Triangle) obj);
+            tri.membershipGrade(start, end, step);
+            return tri.member;
+        }
+        else if(className == "Trapezoid"){
+            Trapezoid tra = new Trapezoid();
+            tra.copy((Trapezoid) obj);
+            tra.membershipGrade(start, end, step);
+            return tra.member;
+        }
+        else if(className == "Gaussian"){
+            Gaussian gau = new Gaussian();
+            gau.copy((Gaussian) obj);
+            gau.membershipGrade(start, end, step);
+            return gau.member;
+        }
+        else if(className == "Bell"){
+            Bell bell = new Bell();
+            bell.copy((Bell) obj);
+            bell.membershipGrade(start, end, step);
+            return bell.member;
+        }
+        else if(className == "Sigmoidal"){
+            Sigmoidal sig = new Sigmoidal();
+            sig.copy((Sigmoidal) obj);
+            sig.membershipGrade(start, end, step);
+            return sig.member;
+        }
+        else{
+            return null;
+        }
+    }
+    
+//    ==========================================================================
 //    Function for get membership function grade value from index of MFList
 //    and input x value
 //    ==========================================================================
@@ -202,6 +247,13 @@ public class FuzzySet {
         }
     }
     
+//    ==========================================================================
+//    Function for reset membership function of fuzzy set
+//    ==========================================================================
+    public void resetMF(){
+        this.MFList = new ArrayList();
+    }
+    
     public String toString(){
         return this.name;
     }
@@ -209,30 +261,30 @@ public class FuzzySet {
 //    ##########################################################################
 //    ****************************** Main !!! **********************************
 //    ##########################################################################
-    public static void main(String args[]){
-        Triangle test = new Triangle("small", 20, 60, 80);
-        test.membershipGrade(0, 100, 1);
-        
-        println(test.getClass().getName());
-        
-        List x = new ArrayList();
-        x.add(1);
-        x.add("KOL");
-        x.add(1.33);
-        
-        println(x);
-        println("Access List via while");
-        Iterator iter = x.iterator();
-        while(iter.hasNext()){
-            Object temp = iter.next();
-            println(temp + "\t" + temp.getClass());
-        }
-        
-        println("Access List via for");
-        for(Object temp:x){
-            println(temp + "\t" + temp.getClass());
-        }
-    }
+//    public static void main(String args[]){
+//        Triangle test = new Triangle("small", 20, 60, 80);
+//        test.membershipGrade(0, 100, 1);
+//        
+//        println(test.getClass().getName());
+//        
+//        List x = new ArrayList();
+//        x.add(1);
+//        x.add("KOL");
+//        x.add(1.33);
+//        
+//        println(x);
+//        println("Access List via while");
+//        Iterator iter = x.iterator();
+//        while(iter.hasNext()){
+//            Object temp = iter.next();
+//            println(temp + "\t" + temp.getClass());
+//        }
+//        
+//        println("Access List via for");
+//        for(Object temp:x){
+//            println(temp + "\t" + temp.getClass());
+//        }
+//    }
     
 //    ##########################################################################
 //    Function for easy show something

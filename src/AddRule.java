@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.Timer;
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -12,16 +13,55 @@ import javax.swing.Timer;
  * and open the template in the editor.
  */
 public class AddRule extends javax.swing.JFrame implements ActionListener {
+//    use timer for run actionPerformed overtime
+//    Usage:    1. use timer.start() for start run actionPerformed function
+//              2. use timer.stop() for stop run actionPerformed function
+
+    Timer tm = new Timer(0, (ActionListener) this);
+    String output;
+    public DefaultListModel allRule;        // model for allList: JList
+    public DefaultListModel selectedRule;   // model for selectedList: JList
+//        format of rules 
+//        [ ["If X is ...", p, q, r, [ [FuzzySet, MFindex] ] ],
+//          ["If X is ...", p, q, r, [ [FuzzySet, MFindex], [FuzzySet, MFindex] ] ]
+//        ]
+    public List rules;                      // List of all rules
+    public List ruleSelect;
 
     /**
      * Creates new form AddRule
      */
     public AddRule() {
         initComponents();
-//        set Initial value of variable
+        this.init();
+    }
+
+    public void init() {
+        this.output = "";
         this.allRule = new DefaultListModel();
         this.selectedRule = new DefaultListModel();
         this.rules = new ArrayList();
+        this.ruleSelect = new ArrayList();
+    }
+
+//    ==========================================================================
+//    Function for set all rules
+//    ==========================================================================
+    public void setRules(List rules) {
+        this.rules = rules;
+
+        this.allRule = new DefaultListModel();
+        for (Object o : this.rules) {
+            String str = (String) ((List) o).get(0);
+            this.allRule.addElement(str);
+        }
+
+        this.allList.setModel(allRule);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        
     }
 
     /**
@@ -38,14 +78,23 @@ public class AddRule extends javax.swing.JFrame implements ActionListener {
         jScrollPane2 = new javax.swing.JScrollPane();
         allList = new javax.swing.JList();
         add = new javax.swing.JButton();
-        delete = new javax.swing.JButton();
         ok = new javax.swing.JButton();
         cancle = new javax.swing.JButton();
 
         setTitle("Add Fuzzy If-Then Rules");
 
+        selectedList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                selectedListMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(selectedList);
 
+        allList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                allListMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(allList);
 
         add.setText("ADD >>>");
@@ -56,14 +105,21 @@ public class AddRule extends javax.swing.JFrame implements ActionListener {
             }
         });
 
-        delete.setText("<<< Delete");
-        delete.setEnabled(false);
-
         ok.setBackground(new java.awt.Color(0, 255, 51));
         ok.setText("OK");
+        ok.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okActionPerformed(evt);
+            }
+        });
 
         cancle.setBackground(new java.awt.Color(255, 0, 0));
         cancle.setText("Cancle");
+        cancle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancleActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -73,9 +129,7 @@ public class AddRule extends javax.swing.JFrame implements ActionListener {
                 .addGap(19, 19, 19)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(delete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(add, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(add, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(18, Short.MAX_VALUE))
@@ -89,18 +143,17 @@ public class AddRule extends javax.swing.JFrame implements ActionListener {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(jScrollPane2)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(41, 41, 41)
-                        .addComponent(add)
-                        .addGap(18, 18, 18)
-                        .addComponent(delete))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane2)))
+                        .addGap(119, 119, 119)
+                        .addComponent(add)))
                 .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancle)
@@ -111,140 +164,150 @@ public class AddRule extends javax.swing.JFrame implements ActionListener {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+//    ==========================================================================
+//    add: JButton
+//    ==========================================================================
     private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
         // TODO add your handling code here:
-        
+        if (this.allList.getSelectedValue() != null) {
+            int index = this.allList.getSelectedIndex();
+            List rule = (List) this.rules.get(index);
+
+            // one input fuzzy set
+            if (rule.size() == 5) {
+                String pStr = JOptionPane.showInputDialog(this, "Please fill p value");
+                String rStr = JOptionPane.showInputDialog(this, "Please fill r value");
+                try {
+                    double p = Double.parseDouble(pStr);
+                    double r = Double.parseDouble(rStr);
+                    rule.set(1, p);
+                    rule.set(3, r);
+                    this.ruleSelect.add(rule);
+
+                    String str = (String) rule.get(0) + " " + p + " * input +" + r;
+                    this.selectedRule.addElement(str);
+                    this.selectedList.setModel(this.selectedRule);
+                    
+                    for(Object o: this.ruleSelect){
+                        println(o);
+                    }
+
+                } catch (Exception error) {
+                    JOptionPane.showMessageDialog(this, "You should fill p and r value as real number.");
+                }
+            } 
+            // two input fuzzy set
+            else if (rule.size() == 6) {
+                String pStr = JOptionPane.showInputDialog(this, "Please fill p value");
+                String qStr = JOptionPane.showInputDialog(this, "Please fill q value");
+                String rStr = JOptionPane.showInputDialog(this, "Please fill r value");
+                try{
+                    double p = Double.parseDouble(pStr);
+                    double q = Double.parseDouble(qStr);
+                    double r = Double.parseDouble(rStr);
+                    
+                    rule.set(1, p);
+                    rule.set(2, q);
+                    rule.set(3, r);
+                    this.ruleSelect.add(rule);
+                    
+                    String str = (String) rule.get(0) + " " + p + " * input1 + " + q + " * input2 + " + r;
+                    this.selectedRule.addElement(str);
+                    this.selectedList.setModel(this.selectedRule);
+                    
+                    for(Object o: this.ruleSelect){
+                        println(o);
+                    }
+                }catch(Exception error){
+                    JOptionPane.showMessageDialog(this, "You should fill p, q and r value as real number.");
+                }
+            }
+        }
+
     }//GEN-LAST:event_addActionPerformed
+
+//    ==========================================================================
+//    allList: JList
+//    ==========================================================================
+    private void allListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_allListMouseClicked
+        // TODO add your handling code here:
+        if (this.allList.getSelectedValue() != null) {
+            println("You select " + this.allList.getSelectedValue());
+            this.add.setEnabled(true);
+        } else {
+            this.add.setEnabled(false);
+        }
+    }//GEN-LAST:event_allListMouseClicked
+
+//    ==========================================================================
+//    selectList: JList
+//    ==========================================================================
+    private void selectedListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectedListMouseClicked
+
+    }//GEN-LAST:event_selectedListMouseClicked
+
+//    ==========================================================================
+//    cancle: JButton
+//    ==========================================================================
+    private void cancleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancleActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_cancleActionPerformed
+
+//    ==========================================================================
+//    ok: JButton
+//    ==========================================================================
+    private void okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okActionPerformed
+        // TODO add your handling code here:
+        this.output = "You add " + this.ruleSelect.size() + " rules";
+        this.dispose();
+    }//GEN-LAST:event_okActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AddRule.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AddRule.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AddRule.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AddRule.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new AddRule().setVisible(true);
-            }
-        });
-    }
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(AddRule.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(AddRule.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(AddRule.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(AddRule.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new AddRule().setVisible(true);
+//            }
+//        });
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton add;
     private javax.swing.JList allList;
     private javax.swing.JButton cancle;
-    private javax.swing.JButton delete;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton ok;
     private javax.swing.JList selectedList;
     // End of variables declaration//GEN-END:variables
 
-//    use timer for run actionPerformed overtime
-//    Usage:    1. use timer.start() for start run actionPerformed function
-//              2. use timer.stop() for stop run actionPerformed function
-    Timer tm = new Timer(0, (ActionListener) this);
-    public DefaultListModel allRule;        // model for allList: JList
-    public DefaultListModel selectedRule;   // model for selectedList: JList
-//        format of rules 
-//        [ ["If X is ...", p, q, r, [ [FuzzySet, MFindex] ] ],
-//          ["If X is ...", p, q, r, [ [FuzzySet, MFindex], [FuzzySet, MFindex] ] ]
-//        ]
-    public List rules;                      // List of all rules
-    
-//    ==========================================================================
-//    Function for set all rules
-//    ==========================================================================
-    public void setRules(List rules){
-//        Iterator for access each List in rules
-//        for(int i=0; i<rules.size(); i++){
-//            List copy = new ArrayList();
-//            List rule = (List)rules.get(i); // get a rule in rules List
-//            
-//            String str = (String) rule.get(0);
-//            println(rule.get(1));
-//            println(rule.get(1).getClass().getName());
-//            double p = (double) rule.get(1);
-//            double q = (double) rule.get(2);
-//            double r = (double) rule.get(3);
-////            format of member [FuzzySet, MFindex], [FuzzySet, MFindex]
-//            List member = ((List)rule.get(4));
-//            List newMember = new ArrayList();
-//            for(int j = 0; j < member.size(); j++){
-//                List temp = (List) member.get(j);
-//                List newTemp = new ArrayList();
-//                FuzzySet fs = new FuzzySet();
-//                fs.copy((FuzzySet)temp.get(0));
-//                int MFindex = (int) temp.get(1);
-//                
-//                newTemp.add(fs);
-//                newTemp.add(MFindex);
-//                newMember.add(newTemp);
-//            }
-            
-//            copy.add(str);
-//            copy.add(p);
-//            copy.add(q);
-//            copy.add(r);
-//            copy.add(newMember);
-//            
-//            rules.add(copy);
-//        }
-//        println("Copy rules: "+rules);
-    }
-    
-    public void addRule(List rules){
-//        format of rules 
-//        [ ["If X is ...", p, q, r, [ [FuzzySet, MFindex] ] ],
-//          ["If X is ...", p, q, r, [ [FuzzySet, MFindex], [FuzzySet, MFindex] ] ]
-//        ]
-//        Iterator for access each List in rules
-//        for(int i=0; i<rules.size(); i++){
-//            List rule = (List)rules.get(i);     // access each List in rules
-//            String str = (String)rule.get(0);   // access string at index 0
-//            this.allRule.addElement(str);      // add string for show in allRule:JList
-//            //rule.set(1, 100);
-//        }
-//        this.allList.setModel(this.allRule);    // show string in allRule:JList
-        //tm.start();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-////        if you select something in allList:JList
-//        if(this.allList.getSelectedValue() != null){
-//            System.out.print(this.allList.getSelectedIndex()+" ");
-//            System.out.println("Obj: "+this.allList.getSelectedValue().getClass().getName());
-//            this.add.setEnabled(true);
-//        }
-////        if you don't select something in allList:JList
-//        else{
-//            this.add.setEnabled(false);
-//        }
-    }
-    
 //    ##########################################################################
 //    Function for easy show something
 //    ##########################################################################

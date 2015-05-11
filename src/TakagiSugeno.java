@@ -1,7 +1,10 @@
-
+import org.jzy3d.demos.scatter.ScatterDemo;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.jzy3d.demos.DemoLauncher;
 
 //         __________________    _________    _________
 //        / _______/ _______ \  / _______ \  / _______/
@@ -282,123 +285,149 @@ public class TakagiSugeno {
             }
         }
     }
+    
+//    ==========================================================================
+//    Function for reset inputList
+//    ==========================================================================
+    public void resetInputList(){
+        this.inputList = new ArrayList();
+    }
+    
+//    ==========================================================================
+//    Function for reset ruleList
+//    ==========================================================================
+    public void resetRuleList(){
+        this.ruleList = new ArrayList();
+    }
+    
+//    ==========================================================================
+//    Function for reset outputList
+//    ==========================================================================
+    public void resetOutputList(){
+        this.outputList = new ArrayList();
+    }
 
 //    ##########################################################################
 //    ****************************** Main !!! **********************************
 //    ##########################################################################
-    public static void main(String args[]) {
-//        example 9.3 ==========================================================
-        TakagiSugeno TS = new TakagiSugeno(-10, 10, 0.1);
-        TS.setOutputName("Y");
-
-        FuzzySet X = new FuzzySet("X", TS.start, TS.end, TS.step);
-
-        Sigmoidal small = new Sigmoidal("small", -1, -4);
-        small.membershipGrade(-10, 10, 0.1);
-
-        Bell medium = new Bell("medium", 4, 5, 0);
-        medium.membershipGrade(-10, 10, 0.1);
-
-        Sigmoidal large = new Sigmoidal("large", 1, 4);
-        large.membershipGrade(-10, 10, 0.1);
-
-        X.addMF(small);
-        X.addMF(medium);
-        X.addMF(large);
-
-        TS.addInput(X);
-
-        List rules = TS.genRule();
-
-        List rule1 = (List) rules.get(0);
-        List rule2 = (List) rules.get(1);
-        List rule3 = (List) rules.get(2);
-
-        rule1.set(1, (double) 0.1);
-        rule1.set(3, (double) 6.4);
-
-        rule2.set(1, (double) -0.5);
-        rule2.set(3, (double) 4);
-
-        rule3.set(1, (double) 1);
-        rule3.set(3, (double) -2);
-
-        TS.addRule(rule1);
-        TS.addRule(rule2);
-        TS.addRule(rule3);
-
-        TS.calOutput();
-
-//        for(Object o:TS.outputList){
-//            println(o);
+//    public static void main(String args[]) {
+////        example 9.3 ==========================================================
+//        TakagiSugeno TS = new TakagiSugeno(-10, 10, 0.01);
+//        TS.setOutputName("Y");
+//
+//        FuzzySet X = new FuzzySet("X", TS.start, TS.end, TS.step);
+//
+//        Sigmoidal small = new Sigmoidal("small", -1, -4);
+//        small.membershipGrade(-10, 10, 0.1);
+//
+//        Bell medium = new Bell("medium", 4, 5, 0);
+//        medium.membershipGrade(-10, 10, 0.1);
+//
+//        Sigmoidal large = new Sigmoidal("large", 1, 4);
+//        large.membershipGrade(-10, 10, 0.1);
+//
+//        X.addMF(small);
+//        X.addMF(medium);
+//        X.addMF(large);
+//
+//        TS.addInput(X);
+//
+//        List rules = TS.genRule();
+//
+//        List rule1 = (List) rules.get(0);
+//        List rule2 = (List) rules.get(1);
+//        List rule3 = (List) rules.get(2);
+//
+//        rule1.set(1, (double) 0.1);
+//        rule1.set(3, (double) 6.4);
+//
+//        rule2.set(1, (double) -0.5);
+//        rule2.set(3, (double) 4);
+//
+//        rule3.set(1, (double) 1);
+//        rule3.set(3, (double) -2);
+//
+//        TS.addRule(rule1);
+//        TS.addRule(rule2);
+//        TS.addRule(rule3);
+//
+//        TS.calOutput();
+//
+////        for(Object o:TS.outputList){
+////            println(o);
+////        }
+////        ======================================================================
+////        example 9.4 ==========================================================
+//        TakagiSugeno TS2 = new TakagiSugeno(-5, 5, 0.05);
+//        TS2.setOutputName("Z");
+//
+//        FuzzySet X2 = new FuzzySet("X", TS2.start, TS2.end, TS2.step);
+//        FuzzySet Y2 = new FuzzySet("Y", TS2.start, TS2.end, TS2.step);
+//
+//        Sigmoidal small1 = new Sigmoidal("small", -3, 0);
+//        small1.membershipGrade(TS2.start, TS2.end, TS2.step);
+//
+//        Sigmoidal large1 = new Sigmoidal("large", 3, 0);
+//        large1.membershipGrade(TS2.start, TS2.end, TS2.step);
+//
+//        Bell small2 = new Bell("small", 5, 2.06, -5);
+//        small2.membershipGrade(TS2.start, TS2.end, TS2.step);
+//
+//        Bell large2 = new Bell("large", 5, 2.06, 5);
+//        large2.membershipGrade(TS2.start, TS2.end, TS2.step);
+//
+//        X2.addMF(small1);
+//        X2.addMF(large1);
+//
+//        Y2.addMF(small2);
+//        Y2.addMF(large2);
+//
+//        TS2.addInput(X2);
+//        TS2.addInput(Y2);
+//
+//        List rules2 = TS2.genRule();
+//
+//        List rule21 = (List) rules2.get(0);
+//        List rule22 = (List) rules2.get(1);
+//        List rule23 = (List) rules2.get(2);
+//        List rule24 = (List) rules2.get(3);
+//
+//        rule21.set(1, (double)-1);
+//        rule21.set(2, (double)1);
+//        rule21.set(3, (double)1);
+//
+//        rule22.set(1, (double)0);
+//        rule22.set(2, (double)-1);
+//        rule22.set(3, (double)3);
+//
+//        rule23.set(1, (double)-1);
+//        rule23.set(2, (double)0);
+//        rule23.set(3, (double)3);
+//
+//        rule24.set(1, (double)1);
+//        rule24.set(2, (double)1);
+//        rule24.set(3, (double)2);
+//
+//        TS2.addRule(rule21);
+//        TS2.addRule(rule22);
+//        TS2.addRule(rule23);
+//        TS2.addRule(rule24);
+//
+//        TS2.calOutput();
+//        
+////        for(Object o: TS2.outputList){
+////            double x = (double) ((List)o).get(0);
+////            double y = (double) ((List)o).get(1);
+////            double z = (double) ((List)o).get(2);
+////            println(x + "," + y + "," + z);
+////        }
+//        
+//        try {
+//            DemoLauncher.openDemo(new ScatterDemo(TS2.outputList));
+//        } catch (Exception ex) {
+//            Logger.getLogger(TakagiSugeno.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-//        ======================================================================
-//        example 9.4 ==========================================================
-        TakagiSugeno TS2 = new TakagiSugeno(-5, 5, 0.1);
-        TS2.setOutputName("Z");
-
-        FuzzySet X2 = new FuzzySet("X", TS2.start, TS2.end, TS2.step);
-        FuzzySet Y2 = new FuzzySet("Y", TS2.start, TS2.end, TS2.step);
-
-        Sigmoidal small1 = new Sigmoidal("small", -3, 0);
-        small1.membershipGrade(TS2.start, TS2.end, TS2.step);
-
-        Sigmoidal large1 = new Sigmoidal("large", 3, 0);
-        large1.membershipGrade(TS2.start, TS2.end, TS2.step);
-
-        Bell small2 = new Bell("small", 5, 2.06, -5);
-        small2.membershipGrade(TS2.start, TS2.end, TS2.step);
-
-        Bell large2 = new Bell("large", 5, 2.06, 5);
-        large2.membershipGrade(TS2.start, TS2.end, TS2.step);
-
-        X2.addMF(small1);
-        X2.addMF(large1);
-
-        Y2.addMF(small2);
-        Y2.addMF(large2);
-
-        TS2.addInput(X2);
-        TS2.addInput(Y2);
-
-        List rules2 = TS2.genRule();
-
-        List rule21 = (List) rules2.get(0);
-        List rule22 = (List) rules2.get(1);
-        List rule23 = (List) rules2.get(2);
-        List rule24 = (List) rules2.get(3);
-
-        rule21.set(1, (double)-1);
-        rule21.set(2, (double)1);
-        rule21.set(3, (double)1);
-
-        rule22.set(1, (double)0);
-        rule22.set(2, (double)-1);
-        rule22.set(3, (double)3);
-
-        rule23.set(1, (double)-1);
-        rule23.set(2, (double)0);
-        rule23.set(3, (double)3);
-
-        rule24.set(1, (double)1);
-        rule24.set(2, (double)1);
-        rule24.set(3, (double)2);
-
-        TS2.addRule(rule21);
-        TS2.addRule(rule22);
-        TS2.addRule(rule23);
-        TS2.addRule(rule24);
-
-        TS2.calOutput();
-        
-        for(Object o: TS2.outputList){
-            double x = (double) ((List)o).get(0);
-            double y = (double) ((List)o).get(1);
-            double z = (double) ((List)o).get(2);
-            println(x + "," + y + "," + z);
-        }
-
-    }
+//    }
 
 //    ##########################################################################
 //    Function for easy show something

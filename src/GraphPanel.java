@@ -186,10 +186,11 @@ public class GraphPanel extends JPanel implements ActionListener {
                     textwidth = (int) (font.getStringBounds((Double.toString(this.Xmin)), frc).getWidth());
                     textheight = (int) (font.getStringBounds((Double.toString(this.Xmin)), frc).getHeight());
                     g2d.setColor(Color.black);
+                    Double Ypos = this.changeScale(0);
                     g2d.drawString(
                             Double.toString(this.Xmin),
                             this.marginLeft - (textwidth / 2),
-                            HEIGHT - this.marginBottom + textheight
+                            (float)((this.HEIGHT - this.marginBottom + this.marginTop) - Ypos) + textheight
                     );
 //                    draw String for maximum X value
                     textwidth = (int) (font.getStringBounds(Double.toString(this.Xmax), frc).getWidth());
@@ -197,7 +198,7 @@ public class GraphPanel extends JPanel implements ActionListener {
                     g2d.drawString(Double.toString(
                             this.Xmax),
                             (WIDTH - this.marginRight) - (textwidth / 2),
-                            HEIGHT - this.marginBottom + textheight
+                            (float)((this.HEIGHT - this.marginBottom + this.marginTop) - Ypos) + textheight
                     );
 //                    draw String for 50% of X length
                     double x50 = (this.Xmin + this.Xmax) * 0.5;
@@ -207,7 +208,7 @@ public class GraphPanel extends JPanel implements ActionListener {
                     g2d.drawString(
                             Double.toString(x50),
                             (float) (Xpos - (textwidth / 2)),
-                            HEIGHT - this.marginBottom + textheight
+                            (float)((this.HEIGHT - this.marginBottom + this.marginTop) - Ypos) + textheight
                     );
 //                    draw String for 25% of X length
                     double x25 = (this.Xmin + x50) * 0.5;
@@ -217,7 +218,7 @@ public class GraphPanel extends JPanel implements ActionListener {
                     g2d.drawString(
                             Double.toString(x25),
                             (float) (Xpos - (textwidth / 2)),
-                            HEIGHT - this.marginBottom + textheight
+                            (float)((this.HEIGHT - this.marginBottom + this.marginTop) - Ypos) + textheight
                     );
 //                    draw String for 75% of X length
                     double x75 = (x50 + this.Xmax) * 0.5;
@@ -227,7 +228,7 @@ public class GraphPanel extends JPanel implements ActionListener {
                     g2d.drawString(
                             Double.toString(x75),
                             (float) (Xpos - (textwidth / 2)),
-                            HEIGHT - this.marginBottom + textheight
+                            (float)((this.HEIGHT - this.marginBottom + this.marginTop) - Ypos) + textheight
                     );
 //                    draw String for 0% of Y length
                     double y0 = this.Ymin;
@@ -239,7 +240,7 @@ public class GraphPanel extends JPanel implements ActionListener {
                     g2d.drawString(
                             Double.toString(y0),
                             this.marginLeft - textwidth,
-                            (HEIGHT - this.marginBottom)
+                            (float)((this.HEIGHT - this.marginBottom + this.marginTop) - Ypos)
                     );
 //                    draw String for 100% of Y length
                     double y100 = this.Ymax;
@@ -255,19 +256,25 @@ public class GraphPanel extends JPanel implements ActionListener {
                     );
 //                    draw String for 50% of Y length
                     double y50 = (y100 + y0) * 0.5;
+//                    convert x as double 2 digit after point
+                    df = new DecimalFormat("#.##");
+                    y50 = Double.valueOf(df.format(y50));
                     textwidth = (int) (font.getStringBounds(Double.toString(y50), frc).getWidth());
                     textheight = (int) (font.getStringBounds(Double.toString(y50), frc).getHeight());
-                    float Ypos = (float) ((this.HEIGHT - (this.marginBottom + this.marginTop)) * 0.5 + this.marginTop);
+                    Ypos = ((this.HEIGHT - (this.marginBottom + this.marginTop)) * 0.5 + this.marginTop);
                     g2d.drawString(
                             Double.toString(y50),
                             this.marginLeft - textwidth,
-                            (float) (Ypos + (textwidth / 2))
+                            (float)(Ypos + (textwidth / 2))
                     );
 //                    draw String for 25% of Y length
                     double y25 = (y50 + y0) * 0.5;
+//                    convert x as double 2 digit after point
+                    df = new DecimalFormat("#.##");
+                    y25 = Double.valueOf(df.format(y25));
                     textwidth = (int) (font.getStringBounds(Double.toString(y25), frc).getWidth());
                     textheight = (int) (font.getStringBounds(Double.toString(y25), frc).getHeight());
-                    Ypos = (float) ((this.HEIGHT - (this.marginBottom + this.marginTop)) * 0.75 + this.marginTop);
+                    Ypos = ((this.HEIGHT - (this.marginBottom + this.marginTop)) * 0.75 + this.marginTop);
                     g2d.drawString(
                             Double.toString(y25),
                             this.marginLeft - textwidth,
@@ -275,9 +282,12 @@ public class GraphPanel extends JPanel implements ActionListener {
                     );
 //                    draw String for 75% of Y length
                     double y75 = (y100 + y50) * 0.5;
+//                    convert x as double 2 digit after point
+                    df = new DecimalFormat("#.##");
+                    y75 = Double.valueOf(df.format(y75));
                     textwidth = (int) (font.getStringBounds(Double.toString(y75), frc).getWidth());
                     textheight = (int) (font.getStringBounds(Double.toString(y75), frc).getHeight());
-                    Ypos = (float) ((this.HEIGHT - (this.marginBottom + this.marginTop)) * 0.25 + this.marginTop);
+                    Ypos = ((this.HEIGHT - (this.marginBottom + this.marginTop)) * 0.25 + this.marginTop);
                     g2d.drawString(
                             Double.toString(y75),
                             this.marginLeft - textwidth,
@@ -303,7 +313,7 @@ public class GraphPanel extends JPanel implements ActionListener {
         g2d.setColor(new Color(207, 207, 207));     // set color for draw grid
         g2d.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         // coordinate for draw line
-        int x1 = this.marginLeft, y1 = this.marginTop, x2 = this.marginLeft, y2 = HEIGHT - this.marginBottom;
+        int x1 = this.marginLeft, y1 = this.marginTop, x2 = this.marginLeft, y2 = (int) (HEIGHT - this.changeScale(0));
 //        Draw line in vertical
 //        ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 //        ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -343,21 +353,17 @@ public class GraphPanel extends JPanel implements ActionListener {
 //    ****************************** Main !!! **********************************
 //    ##########################################################################
     public static void main(String args[]) {
-        Sigmoidal small = new Sigmoidal("small", -1, -4);
-        small.membershipGrade(-10, 10, 0.1);
+        Bell small = new Bell("small", 5, 2.06 , -5);
+        small.membershipGrade(-5, 5, 0.01);
 
-        Bell medium = new Bell("medium", 4, 5, 0);
-        medium.membershipGrade(-10, 10, 0.1);
-
-        Sigmoidal large = new Sigmoidal("large", 1, 4);
-        large.membershipGrade(-10, 10, 0.1);
-
-        GraphPanel panel1 = new GraphPanel(800, 600);
+        Bell large = new Bell("large", 5, 2.06, 5);
+        large.membershipGrade(-5, 5, 0.01);
+        
+        GraphPanel panel1 = new GraphPanel(800, 300);
         panel1.setSize(800, 600);
         panel1.setOpaque(false);
         panel1.setVisible(true);
         panel1.setData(small.name, small.member);
-        panel1.setData(medium.name, medium.member);
         panel1.setData(large.name, large.member);
 
         JFrame f = new JFrame();

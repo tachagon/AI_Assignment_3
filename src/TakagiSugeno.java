@@ -160,17 +160,17 @@ public class TakagiSugeno {
     public void calOutput() {
 //        if have one fuzzy set input
         if (this.inputList.size() == 1) {
-            println("calculate output start");
+            println("calculate output for one Input Start...");
 //            Iteration for access all x in fuzzy set
             for (double x = this.start; x <= this.end; x += this.step) {
 //              convert x as double 4 digit after point
                 DecimalFormat df = new DecimalFormat("#.####");
                 x = Double.valueOf(df.format(x));
-                
+
                 double y = 0;       // create y for keep output value
                 double wSum = 0;    // create wSum for keep summation of weight
 //                Iterator for access each rule in ruleList
-                for(int i = 0; i < this.ruleList.size(); i++){
+                for (int i = 0; i < this.ruleList.size(); i++) {
 //                    get a rule from ruleList
 //                    format of rule ["If X is ...", p, q, r, memberList]
                     List rule = (List) this.ruleList.get(i);
@@ -180,11 +180,11 @@ public class TakagiSugeno {
                     List member = (List) rule.get(4);
                     FuzzySet fs = (FuzzySet) member.get(0); // get a Fuzzy Set
                     int MFindex = (int) member.get(1);      // get MFindex
-                    
+
                     // calculate weight of current rule
                     double w = fs.getMG(MFindex, x);
                     double Ytemp = (p * x) + r;
-                    
+
                     wSum += w;  // summation of weight for all rule
                     y += Ytemp * w; // summary of result of each rule
                 }
@@ -194,13 +194,62 @@ public class TakagiSugeno {
                 List temp = new ArrayList();
                 temp.add(x);
                 temp.add(y);
-                temp.add((double)0.0);
+                temp.add((double) 0.0);
                 this.outputList.add(temp);
             }
-        } 
-//        if have two fuzzy set input
+        } //        if have two fuzzy set input
         else if (this.inputList.size() == 2) {
+            println("calculate output for two Input Start...");
+//            Iteration for access all x in fuzzy set
+            for (double x = this.start; x <= this.end; x += this.step) {
+//                  convert x as double 4 digit after point
+                DecimalFormat df = new DecimalFormat("#.####");
+                x = Double.valueOf(df.format(x));
+//                  Iteration for access all y in fuzzy set
+                for (double y = this.start; y <= this.end; y += this.step) {
+//              convert y as double 4 digit after point
+                    DecimalFormat df2 = new DecimalFormat("#.####");
+                    y = Double.valueOf(df2.format(y));
 
+                    double z = 0;       // create y for keep output value
+                    double wSum = 0;    // create wSum for keep summation of weight
+//                    Iterator for access each rule in ruleList
+                    for (int i = 0; i < this.ruleList.size(); i++) {
+//                        get a rule from ruleList
+//                        format of rule ["If X is ...", p, q, r, memberList, memberList]
+                        List rule = (List) this.ruleList.get(i);
+                        double p = (double) rule.get(1);    // get p value
+                        double q = (double) rule.get(2);    // get q value
+                        double r = (double) rule.get(3);    // get r value
+//                        format of member [Fuzzyset, MFindex]
+                        List member1 = (List) rule.get(4);
+                        List member2 = (List) rule.get(5);
+
+                        FuzzySet fs1 = (FuzzySet) member1.get(0); // get Fuzzy Set 1
+                        int MFindex1 = (int) member1.get(1);      // get MFindex 1
+                        FuzzySet fs2 = (FuzzySet) member2.get(0); // get a Fuzzy Set 2
+                        int MFindex2 = (int) member2.get(1);      // get MFindex 2
+
+                        // calculate weight of fuzzy set 1
+                        double w1 = fs1.getMG(MFindex1, x);
+                        // calculate weight of fuzzy set 2
+                        double w2 = fs2.getMG(MFindex2, y);
+                        // select minimum weight as weight of current rule
+                        double w = Double.min(w1, w2);
+
+                        double Ztemp = (p * x) + (q * y) + r;
+
+                        wSum += w;  // summation of weight for all rule
+                        z += Ztemp * w; // summary of result of each rule
+                    }
+                    z = z / wSum;
+                    List temp = new ArrayList();
+                    temp.add(x);
+                    temp.add(y);
+                    temp.add(z);
+                    this.outputList.add(temp);
+                }
+            }
         }
     }
 
@@ -208,11 +257,11 @@ public class TakagiSugeno {
 //    ****************************** Main !!! **********************************
 //    ##########################################################################
     public static void main(String args[]) {
+//        example 9.3 ==========================================================
         TakagiSugeno TS = new TakagiSugeno(-10, 10, 0.1);
-        TS.setOutputName("Z");
+        TS.setOutputName("Y");
 
         FuzzySet X = new FuzzySet("X", TS.start, TS.end, TS.step);
-        FuzzySet Y = new FuzzySet("Y", TS.start, TS.end, TS.step);
 
         Sigmoidal small = new Sigmoidal("small", -1, -4);
         small.membershipGrade(-10, 10, 0.1);
@@ -226,37 +275,99 @@ public class TakagiSugeno {
         X.addMF(small);
         X.addMF(medium);
         X.addMF(large);
-        Y.addMF(small);
-        Y.addMF(medium);
-        Y.addMF(large);
 
         TS.addInput(X);
-        //TS.addInput(Y);
 
         List rules = TS.genRule();
-        
+
         List rule1 = (List) rules.get(0);
         List rule2 = (List) rules.get(1);
         List rule3 = (List) rules.get(2);
-        
-        rule1.set(1, (double)0.1);
-        rule1.set(3, (double)6.4);
-        
-        rule2.set(1, (double)-0.5);
-        rule2.set(3, (double)4);
-        
-        rule3.set(1, (double)1);
-        rule3.set(3, (double)-2);
-        
+
+        rule1.set(1, (double) 0.1);
+        rule1.set(3, (double) 6.4);
+
+        rule2.set(1, (double) -0.5);
+        rule2.set(3, (double) 4);
+
+        rule3.set(1, (double) 1);
+        rule3.set(3, (double) -2);
+
         TS.addRule(rule1);
         TS.addRule(rule2);
         TS.addRule(rule3);
 
         TS.calOutput();
+
+//        for(Object o:TS.outputList){
+//            println(o);
+//        }
+//        ======================================================================
+//        example 9.4 ==========================================================
+        TakagiSugeno TS2 = new TakagiSugeno(-5, 5, 0.1);
+        TS2.setOutputName("Z");
+
+        FuzzySet X2 = new FuzzySet("X", TS2.start, TS2.end, TS2.step);
+        FuzzySet Y2 = new FuzzySet("Y", TS2.start, TS2.end, TS2.step);
+
+        Sigmoidal small1 = new Sigmoidal("small", -3, 0);
+        small1.membershipGrade(TS2.start, TS2.end, TS2.step);
+
+        Sigmoidal large1 = new Sigmoidal("large", 3, 0);
+        large1.membershipGrade(TS2.start, TS2.end, TS2.step);
+
+        Bell small2 = new Bell("small", 5, 2.06, -5);
+        small2.membershipGrade(TS2.start, TS2.end, TS2.step);
+
+        Bell large2 = new Bell("large", 5, 2.06, 5);
+        large2.membershipGrade(TS2.start, TS2.end, TS2.step);
+
+        X2.addMF(small1);
+        X2.addMF(large1);
+
+        Y2.addMF(small2);
+        Y2.addMF(large2);
+
+        TS2.addInput(X2);
+        TS2.addInput(Y2);
+
+        List rules2 = TS2.genRule();
+
+        List rule21 = (List) rules2.get(0);
+        List rule22 = (List) rules2.get(1);
+        List rule23 = (List) rules2.get(2);
+        List rule24 = (List) rules2.get(3);
+
+        rule21.set(1, (double)-1);
+        rule21.set(2, (double)1);
+        rule21.set(3, (double)1);
+
+        rule22.set(1, (double)0);
+        rule22.set(2, (double)-1);
+        rule22.set(3, (double)3);
+
+        rule23.set(1, (double)-1);
+        rule23.set(2, (double)0);
+        rule23.set(3, (double)3);
+
+        rule24.set(1, (double)1);
+        rule24.set(2, (double)1);
+        rule24.set(3, (double)2);
+
+        TS2.addRule(rule21);
+        TS2.addRule(rule22);
+        TS2.addRule(rule23);
+        TS2.addRule(rule24);
+
+        TS2.calOutput();
         
-        for(Object o:TS.outputList){
-            println(o);
+        for(Object o: TS2.outputList){
+            double x = (double) ((List)o).get(0);
+            double y = (double) ((List)o).get(1);
+            double z = (double) ((List)o).get(2);
+            println(x + "," + y + "," + z);
         }
+
     }
 
 //    ##########################################################################

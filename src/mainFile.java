@@ -27,7 +27,8 @@ public class mainFile extends javax.swing.JFrame implements ActionListener {
 //              2. use timer.stop() for stop run actionPerformed function
 
     Timer tm = new Timer(0, (ActionListener) this);
-    AddRule addRuleJFrame;
+    AddRule addRuleJFrame;  // create addRuleJFrame
+    TakagiSugeno TS = new TakagiSugeno();
     
     @Override
     public void actionPerformed(ActionEvent e) {

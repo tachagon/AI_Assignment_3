@@ -42,6 +42,36 @@ public class TakagiSugeno {
         this.outputList = new ArrayList();
         this.ruleList = new ArrayList();
     }
+    
+    public TakagiSugeno(){
+        this.start = 0.0;
+        this.end = 0.0;
+        this.step = 0.0;
+        this.inputList = new ArrayList();
+        this.outputList = new ArrayList();
+        this.ruleList = new ArrayList();
+    }
+    
+//    ==========================================================================
+//    Function for set start value
+//    ==========================================================================
+    public void setStart(double start){
+        this.start = start;
+    }
+    
+//    ==========================================================================
+//    Function for set end value
+//    ==========================================================================
+    public void setEnd(double end){
+        this.end = end;
+    }
+
+//    ==========================================================================
+//    Function for set step value
+//    ==========================================================================
+    public void setStep(double step){
+        this.step = step;
+    }
 
 //    ==========================================================================
 //    Function for ADD a Fuzzy Set into Takagi-Sugeno Input
